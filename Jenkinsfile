@@ -20,17 +20,18 @@ pipeline {
         }
         */
 
-        stage("SonarQube Analysis") {
+                stage("SonarQube Analysis") {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                        mvn compile sonar:sonar \
+                        mvn compile org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                           -Dsonar.projectKey=register-app \
                           -Dsonar.projectName=register-app
                     '''
                 }
             }
         }
+
 
         stage("Quality Gate") {
             steps {

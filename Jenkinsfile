@@ -4,39 +4,20 @@ pipeline {
         jdk 'Java21'
         maven 'Maven3'
     }
-    environment {
-	    APP_NAME = "register-app-pipeline"
-            RELEASE = "1.0.0"
-            DOCKER_USER = "ashfaque9x"
-            DOCKER_PASS = 'dockerhub'
-            IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-            IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-	    JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
-    }
-    stages{
-        stage("Cleanup Workspace"){
-                steps {
-                cleanWs()
-                }
+    stages {
+        stage("Cleanup Workspace") {
+            steps { cleanWs() }
         }
-
-        stage("Checkout from SCM"){
-                steps {
-                    git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/YOUSSEFBLYO/register-app'
-                }
-        }
-
-        stage("Build Application"){
+        stage("Checkout from SCM") {
             steps {
-                sh "mvn clean package"
+                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/YOUSSEFBLYO/register-app'
             }
-
-       }
-
-       stage("Test Application"){
-           steps {
-                 sh "mvn test"
-           }
-       }
-	}
+        }
+        stage("Build Application") {
+            steps { sh "mvn clean package" }
+        }
+        stage("Test Application") {
+            steps { sh "mvn test" }
+        }
+    }
 }

@@ -5,33 +5,41 @@ pipeline {
         maven 'Maven3'
     }
     stages {
-        stage("Checkout from SCM") {
+        stage("Cleanup Workspace") {
             steps {
-                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/YOUSSEFBLYO/register-app'
+                cleanWs()
             }
         }
 
-        /* Étapes commentées temporairement pour gagner du temps :
-        stage("Build Application") {
-            steps { sh "mvn clean package" }
+        stage("Checkout from SCM") {
+            steps {
+                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com'
+            }
         }
-        stage("Test Application") {
-            steps { sh "mvn test" }
-        }
-        */
 
-                stage("SonarQube Analysis") {
+        stage("Build Application") {
+            steps {
+                sh "mvn clean package"
+            }
+        }
+
+        stage("Test Application") {
+            steps {
+                sh "mvn test"
+            }
+        }
+
+        stage("SonarQube Analysis") {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                        mvn compile org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                        mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                           -Dsonar.projectKey=register-app \
                           -Dsonar.projectName=register-app
                     '''
                 }
             }
         }
-
 
         stage("Quality Gate") {
             steps {
@@ -42,3 +50,4 @@ pipeline {
         }
     }
 }
+
